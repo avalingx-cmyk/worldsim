@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #05050a;
+  color: #e2e2f0;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a45;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;
+}
+
+.glow-text {
+  text-shadow: 0 0 20px #7c3aed88, 0 0 40px #7c3aed44;
+}
+
+.glow-border {
+  box-shadow: 0 0 0 1px #7c3aed44, inset 0 0 20px #7c3aed11;
+}
+
+.scan-line {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(124, 58, 237, 0.015) 2px,
+    rgba(124, 58, 237, 0.015) 4px
+  );
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@keyframes liveBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.live-dot {
+  animation: liveBlink 1.5s ease-in-out infinite;
+}
+
+.health-bar {
+  transition: width 1s ease-in-out;
+}
+
+.resource-bar {
+  transition: width 1.5s ease-in-out;
+}
