@@ -198,9 +198,19 @@ export default function WorldSimDashboard() {
   }
 
   const handleReset = async () => {
-    if (!confirm('This will END the current world and erase all history. Are you sure?')) return
-    await fetch('/api/reset', { method: 'POST', headers: { 'x-worldsim-token': 'worldsim2024' } })
-    setState(null); setLogs([])
+    if (!confirm('This will END the current world and erase ALL history from the database.\n\nAre you absolutely sure?')) return
+    setLoading(true)
+    const res = await fetch('/api/reset', { method: 'POST', headers: { 'x-worldsim-token': 'worldsim2024' } })
+    const data = await res.json()
+    if (data.success) {
+      setState(null)
+      setLogs([])
+      setLoading(false)
+      alert('World reset complete. KV database cleared.\n\nPaste a new Grok tick 0 to start fresh.')
+    } else {
+      setLoading(false)
+      alert('Reset failed: ' + (data.error || 'unknown error'))
+    }
   }
 
   const copyBookmarklet = () => {
