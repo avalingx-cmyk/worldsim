@@ -129,6 +129,8 @@ export default function WorldSimDashboard() {
   const [showPrompt, setShowPrompt] = useState(false)
   const [showPaste, setShowPaste] = useState(true)
   const [bmCopied, setBmCopied] = useState(false)
+  const [showBmModal, setShowBmModal] = useState(false)
+  const [bmCode, setBmCode] = useState('')
   const [promptCopied, setPromptCopied] = useState(false)
   const intervalRef = useRef(null)
 
@@ -215,11 +217,8 @@ export default function WorldSimDashboard() {
 
   const copyBookmarklet = () => {
     const bm = buildBookmarklet(window.location.origin)
-    navigator.clipboard.writeText(bm).then(() => {
-      setBmCopied(true)
-      setTimeout(() => setBmCopied(false), 4000)
-      alert('Bookmarklet copied to clipboard!\n\nNow:\n1. Right-click your bookmarks bar\n2. Click "Add bookmark"\n3. Name: WorldSim Send\n4. URL: paste (Ctrl+V or Cmd+V)\n5. Save\n\nThen go to grok.com, run the world prompt, and click "WorldSim Send" after each Grok response!')
-    })
+    setBmCode(bm)
+    setShowBmModal(true)
   }
 
   const copyPrompt = () => {
@@ -433,6 +432,53 @@ export default function WorldSimDashboard() {
           </div>
         )}
       </div>
+
+      {/* BOOKMARKLET MODAL */}
+      {showBmModal && (
+        <div
+          onClick={() => setShowBmModal(false)}
+          style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.85)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background:'#0f0f1a', border:'1px solid #4c1d95', borderRadius:'16px', padding:'2rem', maxWidth:'560px', width:'100%' }}
+          >
+            <h2 style={{ color:'#a78bfa', fontSize:'18px', fontWeight:600, marginBottom:'8px', fontFamily:'monospace' }}>Install Bookmarklet</h2>
+            <p style={{ color:'#6b7280', fontSize:'13px', marginBottom:'20px', lineHeight:'1.6' }}>
+              Copy the URL below. Then right-click your bookmarks bar → <b style={{color:'#d1d5db'}}>Add bookmark</b> → Name it <b style={{color:'#d1d5db'}}>WorldSim Send</b> → paste this as the URL → Save.
+            </p>
+            <p style={{ color:'#9ca3af', fontSize:'12px', marginBottom:'6px', fontFamily:'monospace', textTransform:'uppercase', letterSpacing:'0.05em' }}>Bookmarklet URL — select all and copy:</p>
+            <textarea
+              readOnly
+              onFocus={e => e.target.select()}
+              onClick={e => e.target.select()}
+              value={bmCode}
+              data-bm-textarea="1"
+              style={{ width:'100%', height:'80px', background:'#000', border:'1px solid #374151', borderRadius:'8px', padding:'10px', fontSize:'11px', fontFamily:'monospace', color:'#86efac', resize:'none', marginBottom:'16px', boxSizing:'border-box' }}
+            />
+            <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
+              <button
+                onClick={() => {
+                  const ta = document.querySelector('[data-bm-textarea]')
+                  if (ta) { ta.select(); document.execCommand('copy'); setBmCopied(true); setTimeout(() => setBmCopied(false), 3000) }
+                }}
+                style={{ background:'#6d28d9', color:'white', border:'none', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontFamily:'monospace', cursor:'pointer' }}
+              >
+                {bmCopied ? '✓ Copied!' : 'Copy URL'}
+              </button>
+              <button
+                onClick={() => setShowBmModal(false)}
+                style={{ background:'transparent', color:'#6b7280', border:'1px solid #374151', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontFamily:'monospace', cursor:'pointer' }}
+              >
+                Close
+              </button>
+            </div>
+            <p style={{ color:'#4b5563', fontSize:'12px', marginTop:'16px', lineHeight:'1.5', fontFamily:'monospace' }}>
+              After installing: go to grok.com → run the world prompt → after Grok replies, click <b style={{color:'#92400e'}}>WorldSim Send</b> in your bookmarks bar → world updates here automatically.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="border-t border-gray-900 mt-12 px-6 py-4 text-center">
         <p className="text-xs text-gray-800 font-mono">WORLDSIM-1 · Powered by SuperGrok · No API key required</p>
